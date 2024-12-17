@@ -1,0 +1,13 @@
+.linkColor{
+    color: #ff9b2a;
+}
+.fsAll{
+    font-size: 18px;
+}
+.ReactModal__Content {
+    max-height: 90% !important;
+    z-index: 1031 !important;
+}
+.ReactModal__Overlay{
+    z-index: 1031;;
+}
