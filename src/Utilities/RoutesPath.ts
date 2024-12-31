@@ -6,4 +6,4 @@ export const Route_Names = {
     USERS:"/Users"
 };
 
-export const BASE_URL = import.meta.env.API_ENDPOINT;
+export const EndPoint = import.meta.env.API_ENDPOINT;

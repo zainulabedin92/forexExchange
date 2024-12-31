@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
 import "../style.css";
 import { getrAllUsers } from "../../../Api/DataRequests";
+import GridData from "../GridData/GridData";
 
 const customStyles = {
   content: {
@@ -30,27 +31,28 @@ interface FormDataRegistration {
   userType: string;
 }
 
-useEffect(() => {
-  allUsers();
-},[]);
-
-const allUsers = async () => {
-const res = await getrAllUsers();
-if(res && res.data){
-  console.log(res.data);
-}
-}
 
 const Users = () => {
     let subtitle = useRef<HTMLHeadingElement | null>(null) ;
   const [modalIsOpen, setIsOpen] = React.useState(false);
+  const [AllUsers, setAllUsers] = useState([]);
 
+  
+useEffect(() => {
+  allUsers();
+}, []);
+
+async function allUsers() {
+  const res = await getrAllUsers();
+  if (res && res.data) {
+   setAllUsers(res.data);
+  }
+}
   function openModal() {
     setIsOpen(true);
   }
 
   function afterOpenModal() {
-    // references are now sync'd and can be accessed.
     if (subtitle.current) {
       subtitle.current.style.color = '#f00';
     }
@@ -59,6 +61,20 @@ const Users = () => {
   function closeModal() {
     setIsOpen(false);
   }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type, checked } = e.target as HTMLInputElement;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Form Data Submitted: ", formData);
+    // Pass formData to your API or further processing here
+  };
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -76,48 +92,6 @@ const Users = () => {
     userType: "",
   });
 
-  const [error, setError] = useState<string | null>(null);
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
-
-    
-    if (name === "password" || name === "confirmPassword") {
-      const newFormData = {
-        ...formData,
-        [name]: value,
-      };
-
-      // Check if passwords match
-      if (newFormData.password !== newFormData.confirmPassword) {
-        setError("Passwords do not match.");
-      } else {
-        setError(null); // Clear error if passwords match
-      }
-
-      setFormData(newFormData);
-    } else {
-      setFormData({
-        ...formData,
-        [name]: type === "checkbox" ? checked : value,
-      });
-    }
-  };
-
-  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files) {
-  //     setFormData({ ...formData, profileImage: e.target.files[0] });
-  //   }
-  // };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form Submitted", formData);
-    // Add API call or further processing here
-  };
-
     return (
         <>
          <main id="main" className="main">
@@ -130,9 +104,8 @@ const Users = () => {
             </ol>
           </nav>
         </div>
-        <div className="row">
+        <div className="row mb-3">
           <div className="col-md-7">
-            <h2>All Users</h2>
           </div>
           <div className="col-md-5">
             <button className="btn btn-primary float-end" onClick={openModal}>Create User</button>     
@@ -140,7 +113,7 @@ const Users = () => {
         </div>
         <div className="row">
           <div className="col-12">
-
+           <GridData dataList={AllUsers}/>
           </div>
         </div>
        </main>
@@ -245,7 +218,7 @@ const Users = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
             />
-             {error && <div className="text-danger">{error}</div>}
+            <div className="text-danger"></div>
           </div>
         </div>
        
