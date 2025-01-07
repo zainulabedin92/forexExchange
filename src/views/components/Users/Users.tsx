@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
 import "../style.css";
-import { getrAllUsers } from "../../../Api/DataRequests";
+import { createNewUSer, getrAllUsers } from "../../../Api/DataRequests";
 import GridData from "../GridData/GridData";
 
 const customStyles = {
@@ -70,10 +70,22 @@ async function allUsers() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form Data Submitted: ", formData);
-    // Pass formData to your API or further processing here
+    
+    try
+    {
+      const response = await createNewUSer(formData);
+      if(response.success){
+        console.log("User Created Successfully", response.data);
+      }else{
+        console.error("Error Createing New User:", response.message);
+      }
+    }
+    catch(error) {
+      console.error("unexpected Error: ", error);
+    }
   };
 
   const [formData, setFormData] = useState({

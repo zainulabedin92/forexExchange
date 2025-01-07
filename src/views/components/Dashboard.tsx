@@ -1,11 +1,15 @@
 import React, { useState } from "react";
+import Modal from "react-modal";
 import "./style.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const Dashboard = () => {
     
     const [isCopyHovered, setIsCopyHovered] = useState("");   
     const [isEditHovered, setIsEditHovered] = useState("");
     const [copyMessage, setCopyMessage] = useState("");
+    const [modalIsOpen, setIsOpen] = React.useState(false);
 
     const handleCopy = (code:any) => {
         alert(code);
@@ -19,7 +23,47 @@ const Dashboard = () => {
             console.error("Failed to copy text: ", err);
           });
       };
+
+      function openModal() {
+        setIsOpen(true);
+      }
     
+      const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+          const { name, value, type, checked } = e.target as HTMLInputElement;
+          setFormData((prev) => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : value,
+          }));
+        };
+    
+      function closeModal() {
+        setIsOpen(false);
+      }
+
+     const [formData, setFormData] = useState({
+        userId: "",
+        balance: "",
+        currencySign:"",
+        isActive:""
+      });
+
+       const handleSubmit = async (e: React.FormEvent) => {
+          e.preventDefault();
+          console.log("Form Data Submitted: ", formData);
+          
+          try
+          {
+            /*const response = await createNewUSer(formData);
+            if(response.success){
+              console.log("User Created Successfully", response.data);
+            }else{
+              console.error("Error Createing New User:", response.message);
+            }*/
+          }
+          catch(error) {
+            //console.error("unexpected Error: ", error);
+          }
+        };
 
     return (
         <>
@@ -147,7 +191,8 @@ const Dashboard = () => {
                         </div>
                     </div>
                     </div>
-                </div> <div className="col-lg-3">
+                </div>
+                <div className="col-lg-3">
                     <div className="card">
                         <div className="card-body">
                         <div className="outline-dashbaord">
@@ -203,7 +248,15 @@ const Dashboard = () => {
                     </div>
                     </div>
                 </div>
-               
+                <div className="col-lg-3">
+                    <div className="card">                        
+                        <div className="card-body">
+                            <div className="align-center d-flex flex-column h-100 justify-content-center outline-dashbaord" onClick={openModal}>
+                                <FontAwesomeIcon icon={faPlus} className="linkColor fs-3"></FontAwesomeIcon>
+                            </div>
+                        </div>
+                    </div>
+                </div>           
             </div>
         </section>
         <section>
@@ -223,6 +276,52 @@ const Dashboard = () => {
                 </div>
             </div>
         </section>
+        <Modal
+                isOpen={modalIsOpen}
+                className="modalAddAccount"
+                onRequestClose={closeModal}
+                contentLabel="Modal Add Account"
+              >
+               <div className="container mt-4">
+              <h4 className="mb-4">Add Account</h4>
+              <form onSubmit={handleSubmit}>
+                <div className="row">
+                    <input type="hidden" name="userId" id="userId"></input>
+                <div className="col-sm-6 mb-3">
+                  <label htmlFor="userType" className="form-label">
+                   Choose Currency
+                  </label>
+                    <select
+                        className="form-select"
+                        id="currencyType"
+                        name="currencyType" value={formData.currencySign}>
+                        <option value="">Select Currency</option>
+                        <option value="aud">AUD</option>
+                        <option value="dollar">USD</option>
+                        <option value="yuan">Yuan</option>
+                        <option value="gbp">GBP</option>
+                        <option value="pkr">PKR</option>
+                  </select>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="lastName" className="form-label">
+                    Amount
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="amount"
+                    name="amount"
+                    value={formData.balance}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                </div>
+                <button className="btn-default">Submit</button>
+                </form>
+                </div>
+              </Modal>
     </main>
         </>
     )

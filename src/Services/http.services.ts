@@ -21,10 +21,10 @@ export const get = async (url: string,headers: Record<string, any> = {}
 
 };
 
-export const post = async (url: string,headers: Record<string, any> = {}
+export const post = async (url: string,headers: Record<string, any>, body:Record<string, any> = {}
 ): Promise<ApiFunctionReturnType> => {
     try {
-        const res: ApiResponseType = await axios.post(url, {headers});
+        const res: ApiResponseType = await axios.post(url, body, {headers});
         return {
             success:res.data.success,
             data: res.data,
