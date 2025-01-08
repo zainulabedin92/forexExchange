@@ -1,18 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import "./style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { getAllWallets } from "../../Api/DataRequests";
+import { WalletsDTO } from "../../Api/ApiResponse";
 
 const Dashboard = () => {
     
-    const [isCopyHovered, setIsCopyHovered] = useState("");   
+    const [isCopyHovered, setIsCopyHovered] = useState("");  
     const [isEditHovered, setIsEditHovered] = useState("");
     const [copyMessage, setCopyMessage] = useState("");
     const [modalIsOpen, setIsOpen] = React.useState(false);
+    const [accountsData, setAccountsData] = useState<WalletsDTO[]>([]);
 
     const handleCopy = (code:any) => {
-        alert(code);
         navigator.clipboard
           .writeText(code)
           .then(() => {
@@ -23,6 +25,16 @@ const Dashboard = () => {
             console.error("Failed to copy text: ", err);
           });
       };
+      useEffect(() =>{
+        getAllAccounts();
+      })
+
+      async function getAllAccounts(){
+        const res = await getAllWallets(); 
+        if(res && res.data){
+            setAccountsData(res.data);
+        }
+      }
 
       function openModal() {
         setIsOpen(true);
@@ -79,8 +91,9 @@ const Dashboard = () => {
         </div>
        
         <section className="section">
-            <div className="row align-items-top">           
-            <div className="col-lg-3">
+            <div className="row align-items-top">  
+            {accountsData.map((wallet, index) => (
+                <div className="col-lg-3">
                     <div className="card">
                         <div className="card-body">
                         <div className="outline-dashbaord">
@@ -91,8 +104,8 @@ const Dashboard = () => {
                                     </a>
                                 </div>
                                 <div className="col-sm-3 text-end">
-                                    <div className="editCurrency float-end text-end"  onMouseEnter={() => setIsEditHovered('245555')} onMouseLeave={() => setIsEditHovered("")}>
-                                        <input type="hidden" value="245555"/>
+                                    <div className="editCurrency float-end text-end"  onMouseEnter={() => setIsEditHovered(wallet.accountNo)} onMouseLeave={() => setIsEditHovered("")}>
+                                        <input type="hidden" value={wallet.accountNo} />
                                         <img width="25" className={`editicon ${isEditHovered == "245555" ? "d-none" : "d-block"}`} src="/public/assets/img/edit-icon.svg"/>
                                         <img width="25" className={`editiconhover ${isEditHovered == "245555" ? "d-block" : "d-none"}`} src="/public/assets/img/edit-icon-hover.svg" style={{display: "none"}}/>
                                     </div>
@@ -100,13 +113,13 @@ const Dashboard = () => {
                             </div>
                             <div className="row">
                                 <div className="col-sm-7">
-                                    <b className="float-left" style={{fontSize:"15px",marginLeft:"8px"}}>245,555.00</b>
+                                    <b className="float-left" style={{fontSize:"15px",marginLeft:"8px"}}>{wallet.balance}</b>
                                 </div>                            
                             </div>
                             <div className="row">
                                 <div className="col-sm-9">
                                     <span className="amount account-code">
-                                    AED 999991
+                                    {wallet.currencySign} {wallet.accountNo}
                                     </span>
                                 </div>
                                 <div className="col-sm-3 text-end">
@@ -116,16 +129,16 @@ const Dashboard = () => {
                                     onMouseLeave={() => setIsCopyHovered("")}
                                     onClick={() => handleCopy('AED 999991')}
                                     >
-                                    <input type="hidden" name="" id="currencyCode" value="AED 999991" />
+                                    <input type="hidden" name="" id="currencyCode" value={wallet.currencySign +' '+ wallet.accountNo} />
                                     <img
                                         width="25"
-                                        className={`copyicon ${isCopyHovered == "245555" ? "d-none" : "d-block"}`}
+                                        className={`copyicon ${isCopyHovered == wallet.accountNo ? "d-none" : "d-block"}`}
                                         src="/public/assets/img/copy-icon.svg"
                                         alt="Copy"
                                     />
                                     <img
                                         width="25"
-                                        className={`copyiconhover ${isCopyHovered == "245555" ? "d-block" : "d-none"}`}
+                                        className={`copyiconhover ${isCopyHovered == wallet.accountNo ? "d-block" : "d-none"}`}
                                         src="/public/assets/img/copy-icon-hover.svg"
                                         alt="Copy Hover"
                                     />
@@ -136,118 +149,9 @@ const Dashboard = () => {
                     </div>
                     </div>
                 </div>
-                <div className="col-lg-3">
-                    <div className="card">
-                        <div className="card-body">
-                        <div className="outline-dashbaord">
-                            <div className="row">
-                                <div className="col-sm-9">
-                                    <a href="http://forexexchange.cryptokira.com/account-Detail">
-                                        <img src="/public/assets/images/circle-flags/flags/AED.png" className="img-fluid" width="55px"/>
-                                    </a>
-                                </div>
-                                <div className="col-sm-3 text-end">
-                                    <div className="editCurrency float-end text-end"  onMouseEnter={() => setIsEditHovered("245556")} onMouseLeave={() => setIsEditHovered("")}>
-                                        <input type="hidden" value="245556"/>
-                                        <img width="25" className={`editicon ${isEditHovered == "245556" ? "d-none" : "d-block"}`} src="/public/assets/img/edit-icon.svg"/>
-                                        <img width="25" className={`editiconhover ${isEditHovered == "245556" ? "d-block" : "d-none"}`} src="/public/assets/img/edit-icon-hover.svg" style={{display: "none"}}/>
-                                    </div>
-                                </div>                            
-                            </div>
-                            <div className="row">
-                                <div className="col-sm-7">
-                                    <b className="float-left" style={{fontSize:"15px",marginLeft:"8px"}}>245,555.00</b>
-                                </div>                            
-                            </div>
-                            <div className="row">
-                                <div className="col-sm-9">
-                                    <span className="amount account-code">
-                                    AED 999991
-                                    </span>
-                                </div>
-                                <div className="col-sm-3 text-end">
-                                <div
-                                    className="copyCode float-end text-end"
-                                    onMouseEnter={() => setIsCopyHovered("245556")}
-                                    onMouseLeave={() => setIsCopyHovered("")}
-                                    onClick={() => handleCopy('AED 999992')}
-                                    >
-                                    <input type="hidden" name="" id="currencyCode" value="AED 999991" />
-                                    <img
-                                        width="25"
-                                        className={`copyicon ${isCopyHovered == "245556" ? "d-none" : "d-block"}`}
-                                        src="/public/assets/img/copy-icon.svg"
-                                        alt="Copy"
-                                    />
-                                    <img
-                                        width="25"
-                                        className={`copyiconhover ${isCopyHovered == "245556" ? "d-block" : "d-none"}`}
-                                        src="/public/assets/img/copy-icon-hover.svg"
-                                        alt="Copy Hover"
-                                    />
-                                    </div>
-                                </div>                            
-                            </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                <div className="col-lg-3">
-                    <div className="card">
-                        <div className="card-body">
-                        <div className="outline-dashbaord">
-                            <div className="row">
-                                <div className="col-sm-9">
-                                    <a href="http://forexexchange.cryptokira.com/account-Detail">
-                                        <img src="/public/assets/images/circle-flags/flags/AED.png" className="img-fluid" width="55px"/>
-                                    </a>
-                                </div>
-                                <div className="col-sm-3 text-end">
-                                    <div className="editCurrency float-end text-end"  onMouseEnter={() => setIsEditHovered("245557")} onMouseLeave={() => setIsEditHovered("")}>
-                                        <input type="hidden" value="245557"/>
-                                        <img width="25" className={`editicon ${isEditHovered == "245557" ? "d-none" : "d-block"}`} src="/public/assets/img/edit-icon.svg"/>
-                                        <img width="25" className={`editiconhover ${isEditHovered == "245557" ? "d-block" : "d-none"}`} src="/public/assets/img/edit-icon-hover.svg" style={{display: "none"}}/>
-                                    </div>
-                                </div>                            
-                            </div>
-                            <div className="row">
-                                <div className="col-sm-7">
-                                    <b className="float-left" style={{fontSize:"15px",marginLeft:"8px"}}>245,555.00</b>
-                                </div>                            
-                            </div>
-                            <div className="row">
-                                <div className="col-sm-9">
-                                    <span className="amount account-code">
-                                    AED 999991
-                                    </span>
-                                </div>
-                                <div className="col-sm-3 text-end">
-                                <div
-                                    className="copyCode float-end text-end"
-                                    onMouseEnter={() => setIsCopyHovered("245557")}
-                                    onMouseLeave={() => setIsCopyHovered("")}
-                                    onClick={() => handleCopy('AED 999991')}
-                                    >
-                                    <input type="hidden" name="" id="currencyCode" value="AED 999991" />
-                                    <img
-                                        width="25"
-                                        className={`copyicon ${isCopyHovered === "245557" ? "d-none" : "d-block"}`}
-                                        src="/public/assets/img/copy-icon.svg"
-                                        alt="Copy"
-                                    />
-                                    <img
-                                        width="25"
-                                        className={`copyiconhover ${isCopyHovered === "245557" ? "d-block" : "d-none"}`}
-                                        src="/public/assets/img/copy-icon-hover.svg"
-                                        alt="Copy Hover"
-                                    />
-                                    </div>
-                                </div>                            
-                            </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
+            ))}        
+            
+               
                 <div className="col-lg-3">
                     <div className="card">                        
                         <div className="card-body">
@@ -286,7 +190,7 @@ const Dashboard = () => {
               <h4 className="mb-4">Add Account</h4>
               <form onSubmit={handleSubmit}>
                 <div className="row">
-                    <input type="hidden" name="userId" id="userId"></input>
+                    <input type="hidden" name="userId" id="userId" value="1"></input>
                 <div className="col-sm-6 mb-3">
                   <label htmlFor="userType" className="form-label">
                    Choose Currency

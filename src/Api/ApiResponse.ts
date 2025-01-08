@@ -12,3 +12,12 @@ export interface ApiResponseType {
     data: any;
     message: string;
   }
+
+  export interface WalletsDTO{
+    id: any,
+    userId: any,
+    balance: string,
+    accountNo: string,
+    currencySign: string,
+    isActive: boolean
+  }
