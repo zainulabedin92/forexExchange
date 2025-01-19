@@ -1,5 +1,5 @@
 export const Route_Names = {
-    BASE_PATH:"/Dashboard",
+    BASE_PATH:"",
     LOGIN:"/Login",
     DASHBOARD:"/Dashboard",
     Home:"/Home",

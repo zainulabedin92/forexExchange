@@ -6,7 +6,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { getAllWallets } from "../../Api/DataRequests";
 import { WalletsDTO } from "../../Api/ApiResponse";
 
-const Dashboard = () => {
+const DashboardLayout = () => {
     
     const [isCopyHovered, setIsCopyHovered] = useState("");  
     const [isEditHovered, setIsEditHovered] = useState("");
@@ -230,4 +230,4 @@ const Dashboard = () => {
         </>
     )
 }
-export default Dashboard;
+export default DashboardLayout;
